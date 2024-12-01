@@ -2,8 +2,6 @@
 #include <limits.h>
 #include <stdlib.h>
 
-int getSmallestUnvisited(int *col, int *visited, int len, int num_visited);
-int isVisited(int curr_indx, int *visited, int num_visited);
 int getNumberOfLines(FILE *file);
 int parse_data(FILE *file, int *col1, int *col2, int num_lines);
 int compare(const void *a, const void *b);
@@ -49,49 +47,6 @@ int main()
     free(col_1_visited);
     free(col_2);
     free(col_2_visited);
-}
-
-int getSmallestUnvisited(int *col, int *visited, int len, int num_visited)
-{
-    /**
-     * Returns the index of the smallest value that hasnt been visited
-     * @param col: The collumn of values
-     * @return The index of the smallest
-     */
-
-    int indx = -1;
-    int val = 999999999;
-    if (num_visited == len)
-    {
-        printf("All locations visited");
-        return -1;
-    }
-
-    for (int i = 0; i < len; i++)
-    {
-        if (isVisited(i, visited, num_visited))
-        {
-            continue;
-        }
-        if (col[i] < val)
-        {
-            val = col[i];
-            indx = i;
-        }
-    }
-    return indx;
-}
-
-int isVisited(int curr_indx, int *visited, int num_visited)
-{
-    for (int j = 0; j < num_visited; j++)
-    {
-        if (curr_indx == visited[j])
-        {
-            return 1;
-        }
-    }
-    return 0;
 }
 
 int getNumberOfLines(FILE *file)
