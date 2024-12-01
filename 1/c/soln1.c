@@ -3,9 +3,10 @@
 #include <stdlib.h>
 
 int getSmallestUnvisited(int *col, int *visited, int len, int num_visited);
-int isVisited(int curr_indx, int* visited, int num_visited);
+int isVisited(int curr_indx, int *visited, int num_visited);
 int getNumberOfLines(FILE *file);
 int parse_data(FILE *file, int *col1, int *col2, int num_lines);
+int compare(const void *a, const void *b);
 
 int main()
 {
@@ -18,7 +19,7 @@ int main()
 
     int lines = getNumberOfLines(data);
 
-    long long diff = 0;
+    int diff = 0;
     printf("Number of lines: %d\n", lines);
 
     // Arrays to store the data values, and keep track of visited locations
@@ -35,23 +36,19 @@ int main()
         return 1;
     }
 
+    qsort(col_1, lines, sizeof(int), compare);
+    qsort(col_2, lines, sizeof(int), compare);
+
     for (int i = 0; i < lines; i++)
     {
-        int col1Indx = getSmallestUnvisited(col_1, col_1_visited, lines, i);
-        int col2Indx = getSmallestUnvisited(col_2, col_2_visited, lines, i);
-        diff += abs(col_1[col1Indx] - col_2[col2Indx]);
-
-        // printf("Visiting: %d, %d\n\n", col_1[col1Indx], col_2[col2Indx]);
-        col_1_visited[i] = col1Indx;
-        col_2_visited[i] = col2Indx;
+      diff += abs(col_1[i] - col_2[i]);
     }
 
-    printf("Total Diff: %lld\n", diff);
+    printf("Total Diff: %d\n", diff);
     free(col_1);
     free(col_1_visited);
     free(col_2);
     free(col_2_visited);
-    
 }
 
 int getSmallestUnvisited(int *col, int *visited, int len, int num_visited)
@@ -72,7 +69,8 @@ int getSmallestUnvisited(int *col, int *visited, int len, int num_visited)
 
     for (int i = 0; i < len; i++)
     {
-        if (isVisited(i, visited, num_visited)){
+        if (isVisited(i, visited, num_visited))
+        {
             continue;
         }
         if (col[i] < val)
@@ -84,7 +82,7 @@ int getSmallestUnvisited(int *col, int *visited, int len, int num_visited)
     return indx;
 }
 
-int isVisited(int curr_indx, int* visited, int num_visited)
+int isVisited(int curr_indx, int *visited, int num_visited)
 {
     for (int j = 0; j < num_visited; j++)
     {
@@ -130,4 +128,17 @@ int parse_data(FILE *file, int *col1, int *col2, int num_lines)
         }
     }
     return 0;
+}
+
+int compare(const void *a, const void *b)
+{
+    int int_a = *((int *)a);
+    int int_b = *((int *)b);
+
+    if (int_a == int_b)
+        return 0;
+    else if (int_a < int_b)
+        return -1;
+    else
+        return 1;
 }

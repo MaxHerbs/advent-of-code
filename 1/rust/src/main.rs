@@ -3,12 +3,24 @@ use std::io::{self, BufRead, BufReader};
 
 fn main() {
     let file_path = "data.txt";
-    let diff = calc_diff(file_path).unwrap();
-    print!("{:?}\n", diff);
+    let (a,b) = parse(file_path).unwrap();
+    let diff = calc_diff(a,b);
+    print!("Diff: {:?}\n", diff);
 }
 
 
-fn calc_diff(file_path: &str) -> Result<i32, io::Error> {
+fn calc_diff(mut col1: Vec<i32>, mut col2: Vec<i32>) -> i32{
+    let mut diff = 0;
+    col1.sort();
+    col2.sort();
+
+    for i in 0..col1.len(){
+        diff += (col1[i] - col2[i]).abs();
+    }
+    diff
+}
+
+fn parse(file_path: &str) -> Result<(Vec<i32>,Vec<i32>), io::Error> {
     let file = File::open(file_path)?;
     print!("File open\n");
     let reader = BufReader::new(file);
@@ -26,19 +38,9 @@ fn calc_diff(file_path: &str) -> Result<i32, io::Error> {
                 col1.push(val1);
                 col2.push(val2);
             } else {
-                eprintln!("Warning: Failed to parse columns in line: {}\n", line);
+                panic!("Invalid input. NaN")
             }
         }
     }
-
-    col1.sort();
-    col2.sort();
-
-    let mut diff = 0;
-    let num_lines = col1.len();
-    for i in 0..num_lines {
-        diff += (col1[i] - col2[i]).abs()
-    }
-
-    Ok(diff)
+    Ok((col1,col2))
 }
